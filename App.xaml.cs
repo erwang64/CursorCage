@@ -1,14 +1,22 @@
-﻿using System.Configuration;
-using System.Data;
-using System.Windows;
+﻿namespace CursorCage;
 
-namespace CursorCage
+public partial class App : System.Windows.Application
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
-    public partial class App : Application
+    public CursorCageApp Cage { get; private set; } = null!;
+
+    protected override void OnStartup(System.Windows.StartupEventArgs e)
     {
+        base.OnStartup(e);
+        Cage = new CursorCageApp();
+        var window = new MainWindow(Cage);
+        MainWindow = window;
+        Cage.AttachMainWindow(window);
+        window.Show();
     }
 
+    protected override void OnExit(System.Windows.ExitEventArgs e)
+    {
+        Cage.Dispose();
+        base.OnExit(e);
+    }
 }

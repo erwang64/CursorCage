@@ -1,7 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
 using CursorCage.Events;
-using CursorCage.Models;
 
 namespace CursorCage.Views;
 
@@ -24,10 +23,7 @@ public partial class HomePage : Page
     {
         var locked = _app.CursorManager.IsLocked;
         StatusLabel.Text = locked ? "État : verrouillé" : "État : déverrouillé";
-        var mode = _app.CursorManager.LockMode == LockTargetMode.ActiveWindow
-            ? "Fenêtre au premier plan"
-            : "Écran sous le curseur";
-        ModeLabel.Text = "Cible : " + mode;
+        ModeLabel.Text = "Cible : écran courant (autres écrans bloqués)";
         BtnLock.IsEnabled = !locked;
         BtnUnlock.IsEnabled = locked;
     }

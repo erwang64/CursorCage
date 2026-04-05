@@ -3,7 +3,6 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:models="clr-namespace:CursorCage.Models"
       mc:Ignorable="d"
       Title="Paramètres">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -32,6 +31,32 @@
                          FontSize="16"
                          Text="(aucun)" />
             </Border>
+            <TextBlock Text="Ou choisissez manuellement :"
+                       Foreground="#555"
+                       Margin="0,0,0,8" />
+            <WrapPanel Margin="0,0,0,8">
+                <CheckBox x:Name="CtrlCheck"
+                          Content="Ctrl"
+                          Margin="0,0,12,0" />
+                <CheckBox x:Name="AltCheck"
+                          Content="Alt"
+                          Margin="0,0,12,0" />
+                <CheckBox x:Name="ShiftCheck"
+                          Content="Maj"
+                          Margin="0,0,12,0" />
+                <CheckBox x:Name="WinCheck"
+                          Content="Win" />
+            </WrapPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                <ComboBox x:Name="KeyCombo"
+                          Width="220"
+                          DisplayMemberPath="Label"
+                          SelectedValuePath="VirtualKey" />
+                <Button Content="Appliquer"
+                        Margin="10,0,0,0"
+                        Padding="16,8"
+                        Click="ApplyManualHotkey_Click" />
+            </StackPanel>
             <TextBlock x:Name="HotkeyStatus"
                        Foreground="#C62828"
                        TextWrapping="Wrap"
@@ -40,13 +65,14 @@
             <TextBlock Text="Zone de verrouillage"
                        FontWeight="SemiBold"
                        Margin="0,0,0,6" />
-            <ComboBox x:Name="ModeCombo" Margin="0,0,0,16">
-                <ComboBoxItem Tag="{x:Static models:LockTargetMode.ActiveWindow}"
-                              Content="Fenêtre au premier plan"
-                              IsSelected="True" />
-                <ComboBoxItem Tag="{x:Static models:LockTargetMode.ScreenUnderCursor}"
-                              Content="Écran sous le curseur au moment du verrouillage" />
-            </ComboBox>
+            <Border BorderBrush="#DDD"
+                    BorderThickness="1"
+                    Background="#FAFAFA"
+                    Padding="10"
+                    Margin="0,0,0,16">
+                <TextBlock TextWrapping="Wrap"
+                           Text="Mode forcé : verrouillage de l’écran courant (multi-écran bloqué sur le moniteur actuel)." />
+            </Border>
             <CheckBox x:Name="AutoGameCheck"
                       Content="Verrouillage automatique au lancement d'un jeu (bientôt)"
                       IsEnabled="False"

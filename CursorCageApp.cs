@@ -1,4 +1,5 @@
 using CursorCage.Events;
+using CursorCage.Models;
 using CursorCage.Services;
 
 namespace CursorCage;
@@ -24,8 +25,9 @@ public sealed class CursorCageApp : IDisposable
         SettingsManager.LoadSettings();
         CursorManager = new CursorManager(EventBus, WindowManager, ScreenManager)
         {
-            LockMode = SettingsManager.Current.LockTargetMode
+            LockMode = LockTargetMode.ScreenUnderCursor
         };
+        SettingsManager.Current.LockTargetMode = LockTargetMode.ScreenUnderCursor;
         HotkeyManager = new HotkeyManager(EventBus, SettingsManager);
         UiManager = new UIManager();
         _onLockState = e => UiManager.UpdateTrayIcon(e.IsLocked);

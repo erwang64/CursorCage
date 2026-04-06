@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -10,17 +11,42 @@ public sealed class SettingsManager
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         WriteIndented = true,
-        Converters = { new JsonStringEnumConverter() }
+        PropertyNameCaseInsensitive = true,
+        Converters = { new JsonStringEnumConverter() },
+        NumberHandling = JsonNumberHandling.AllowReadingFromString
     };
 
     private readonly string _filePath;
     private AppSettings _settings = new();
 
+    /// <summary>
+    /// Chemin du fichier JSON (affichage / debug). Toujours sous LocalApplicationData après migration.
+    /// </summary>
+    public string SettingsFilePath => _filePath;
+
     public SettingsManager()
     {
-        var dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CursorCage");
-        Directory.CreateDirectory(dir);
-        _filePath = Path.Combine(dir, "settings.json");
+        var localDir = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "CursorCage");
+        var roamingDir = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "CursorCage");
+
+        _filePath = Path.Combine(localDir, "settings.json");
+        Directory.CreateDirectory(localDir);
+
+        // Ancien emplacement : %AppData%\Roaming\CursorCage — copier vers Local si besoin
+        var legacyPath = Path.Combine(roamingDir, "settings.json");
+        try
+        {
+            if (!File.Exists(_filePath) && File.Exists(legacyPath))
+                File.Copy(legacyPath, _filePath, overwrite: false);
+        }
+        catch
+        {
+            // migration best-effort
+        }
     }
 
     public AppSettings Current => _settings;
@@ -34,8 +60,11 @@ public sealed class SettingsManager
                 _settings = new AppSettings();
                 return;
             }
+
             var json = File.ReadAllText(_filePath);
-            _settings = JsonSerializer.Deserialize<AppSettings>(json, JsonOptions) ?? new AppSettings();
+            var loaded = JsonSerializer.Deserialize<AppSettings>(json, JsonOptions) ?? new AppSettings();
+            NormalizeSettings(loaded);
+            _settings = loaded;
         }
         catch
         {
@@ -43,16 +72,53 @@ public sealed class SettingsManager
         }
     }
 
-    public void SaveSettings()
+    public bool TrySaveSettings(out string? errorMessage)
     {
-        var json = JsonSerializer.Serialize(_settings, JsonOptions);
-        File.WriteAllText(_filePath, json);
+        errorMessage = null;
+        try
+        {
+            NormalizeSettings(_settings);
+            var dir = Path.GetDirectoryName(_filePath);
+            if (!string.IsNullOrEmpty(dir))
+                Directory.CreateDirectory(dir);
+
+            var json = JsonSerializer.Serialize(_settings, JsonOptions);
+            var tempPath = _filePath + ".tmp";
+            File.WriteAllText(tempPath, json);
+            if (File.Exists(_filePath))
+                File.Replace(tempPath, _filePath, destinationBackupFileName: null);
+            else
+                File.Move(tempPath, _filePath);
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+            return false;
+        }
     }
 
-    public HotkeyDefinition GetLockHotkey() => _settings.LockHotkey;
+    public void SaveSettings() => TrySaveSettings(out _);
+
+    public HotkeyDefinition GetLockHotkey()
+    {
+        if (_settings.LockHotkey is null)
+            _settings.LockHotkey = CloneHotkey(HotkeyDefinition.Default);
+        return _settings.LockHotkey;
+    }
 
     public void SetLockHotkey(HotkeyDefinition def)
     {
         _settings.LockHotkey = def;
     }
+
+    private static void NormalizeSettings(AppSettings s)
+    {
+        if (s.LockHotkey is null)
+            s.LockHotkey = CloneHotkey(HotkeyDefinition.Default);
+    }
+
+    private static HotkeyDefinition CloneHotkey(HotkeyDefinition h) =>
+        new() { Modifiers = h.Modifiers, VirtualKey = h.VirtualKey };
 }

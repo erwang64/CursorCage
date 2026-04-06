@@ -2,8 +2,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using CursorCage.Native;
+using System.Windows.Threading;
 using CursorCage.Models;
+using CursorCage.Native;
 using CursorCage.Services;
 
 namespace CursorCage.Views;
@@ -13,6 +14,9 @@ public partial class SettingsPage : Page
     private readonly CursorCageApp _app;
     private HotkeyDefinition _pendingHotkey;
     private readonly List<HotkeyOption> _keyOptions = [];
+    private bool _loaded;
+    private bool _suppressAutoSave;
+    private DispatcherTimer? _saveDebounce;
 
     public SettingsPage(CursorCageApp app)
     {
@@ -31,7 +35,9 @@ public partial class SettingsPage : Page
         HotkeyDisplay.Text = HotkeyFormatting.ToDisplayString(_pendingHotkey);
         SyncManualControlsFromPending();
         AutoGameCheck.IsChecked = _app.SettingsManager.Current.AutoLockOnGameLaunch;
+        SettingsPathText.Text = "Fichier : " + _app.SettingsManager.SettingsFilePath;
         HotkeyStatus.Visibility = Visibility.Collapsed;
+        _loaded = true;
     }
 
     private void HotkeyDisplay_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
@@ -41,7 +47,9 @@ public partial class SettingsPage : Page
         {
             _pendingHotkey = Clone(HotkeyDefinition.Default);
             HotkeyDisplay.Text = HotkeyFormatting.ToDisplayString(_pendingHotkey);
+            SyncManualControlsFromPending();
             HotkeyStatus.Visibility = Visibility.Collapsed;
+            PersistSettingsNow();
             return;
         }
 
@@ -63,62 +71,12 @@ public partial class SettingsPage : Page
         HotkeyDisplay.Text = HotkeyFormatting.ToDisplayString(_pendingHotkey);
         SyncManualControlsFromPending();
         HotkeyStatus.Visibility = Visibility.Collapsed;
+        PersistSettingsNow();
     }
 
-    private void ApplyManualHotkey_Click(object sender, RoutedEventArgs e)
-    {
-        if (!TryGetSelectedVirtualKey(out var vk))
-        {
-            SetStatus("Sélectionnez une touche dans la liste.", false);
-            return;
-        }
+    private void ModifierOrKey_Changed(object sender, RoutedEventArgs e) => ScheduleAutoSave();
 
-        var hasModifiers = CtrlCheck.IsChecked == true ||
-                           AltCheck.IsChecked == true ||
-                           ShiftCheck.IsChecked == true ||
-                           WinCheck.IsChecked == true;
-        if (!hasModifiers)
-        {
-            SetStatus("Cochez au moins Ctrl, Alt, Maj ou Win.", false);
-            return;
-        }
-
-        _pendingHotkey = HotkeyFormatting.FromModifierAndVk(
-            CtrlCheck.IsChecked == true,
-            AltCheck.IsChecked == true,
-            ShiftCheck.IsChecked == true,
-            WinCheck.IsChecked == true,
-            vk);
-
-        HotkeyDisplay.Text = HotkeyFormatting.ToDisplayString(_pendingHotkey);
-        SetStatus("Combinaison prête. Cliquez sur Enregistrer pour appliquer.", true);
-    }
-
-    private void Save_Click(object sender, RoutedEventArgs e)
-    {
-        if (!IsHotkeyValid(_pendingHotkey))
-        {
-            SetStatus("Raccourci invalide. Choisissez au moins un modificateur (Ctrl/Alt/Maj/Win) + une touche.", false);
-            return;
-        }
-
-        _app.SettingsManager.Current.LockHotkey = Clone(_pendingHotkey);
-        _app.SettingsManager.Current.LockTargetMode = LockTargetMode.ScreenUnderCursor;
-        _app.SettingsManager.Current.AutoLockOnGameLaunch = AutoGameCheck.IsChecked == true;
-        _app.SettingsManager.SaveSettings();
-        _app.CursorManager.LockMode = LockTargetMode.ScreenUnderCursor;
-
-        if (!_app.HotkeyManager.RegisterFromSettings())
-        {
-            SetStatus(
-                "Impossible d'enregistrer ce raccourci (déjà pris par une autre application ou invalide). Essayez une autre combinaison.",
-                false);
-        }
-        else
-        {
-            SetStatus("Paramètres enregistrés.", true);
-        }
-    }
+    private void KeyCombo_SelectionChanged(object sender, SelectionChangedEventArgs e) => ScheduleAutoSave();
 
     private void ResetHotkey_Click(object sender, RoutedEventArgs e)
     {
@@ -126,6 +84,78 @@ public partial class SettingsPage : Page
         HotkeyDisplay.Text = HotkeyFormatting.ToDisplayString(_pendingHotkey);
         SyncManualControlsFromPending();
         HotkeyStatus.Visibility = Visibility.Collapsed;
+        PersistSettingsNow();
+    }
+
+    private void ScheduleAutoSave()
+    {
+        if (!_loaded || _suppressAutoSave)
+            return;
+
+        _saveDebounce ??= new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(450) };
+        _saveDebounce.Stop();
+        _saveDebounce.Tick -= SaveDebounce_OnTick;
+        _saveDebounce.Tick += SaveDebounce_OnTick;
+        _saveDebounce.Start();
+    }
+
+    private void SaveDebounce_OnTick(object? sender, EventArgs e)
+    {
+        if (_saveDebounce is not null)
+            _saveDebounce.Stop();
+        PersistSettingsNow();
+    }
+
+    private void MergePendingFromUi()
+    {
+        if (TryGetSelectedVirtualKey(out var vkSave))
+        {
+            var hasMods = CtrlCheck.IsChecked == true || AltCheck.IsChecked == true ||
+                          ShiftCheck.IsChecked == true || WinCheck.IsChecked == true;
+            if (hasMods)
+            {
+                _pendingHotkey = HotkeyFormatting.FromModifierAndVk(
+                    CtrlCheck.IsChecked == true,
+                    AltCheck.IsChecked == true,
+                    ShiftCheck.IsChecked == true,
+                    WinCheck.IsChecked == true,
+                    vkSave);
+                HotkeyDisplay.Text = HotkeyFormatting.ToDisplayString(_pendingHotkey);
+            }
+        }
+    }
+
+    private void PersistSettingsNow()
+    {
+        if (!_loaded || _suppressAutoSave)
+            return;
+
+        MergePendingFromUi();
+
+        if (!IsHotkeyValid(_pendingHotkey))
+            return;
+
+        _app.SettingsManager.Current.LockHotkey = Clone(_pendingHotkey);
+        _app.SettingsManager.Current.LockTargetMode = LockTargetMode.ScreenUnderCursor;
+        _app.SettingsManager.Current.AutoLockOnGameLaunch = AutoGameCheck.IsChecked == true;
+
+        if (!_app.SettingsManager.TrySaveSettings(out var err))
+        {
+            SetStatus("Échec de sauvegarde : " + err, false);
+            return;
+        }
+
+        _app.CursorManager.LockMode = LockTargetMode.ScreenUnderCursor;
+
+        if (!_app.HotkeyManager.RegisterFromSettings())
+        {
+            SetStatus(
+                "Combinaison enregistrée sur le disque, mais Windows refuse le raccourci global (déjà pris). Essayez une autre touche.",
+                false);
+            return;
+        }
+
+        SetStatus("Sauvegarde automatique OK.", true);
     }
 
     private void BuildKeyOptions()
@@ -141,11 +171,19 @@ public partial class SettingsPage : Page
 
     private void SyncManualControlsFromPending()
     {
-        CtrlCheck.IsChecked = (_pendingHotkey.Modifiers & HotkeyConstants.MOD_CONTROL) != 0;
-        AltCheck.IsChecked = (_pendingHotkey.Modifiers & HotkeyConstants.MOD_ALT) != 0;
-        ShiftCheck.IsChecked = (_pendingHotkey.Modifiers & HotkeyConstants.MOD_SHIFT) != 0;
-        WinCheck.IsChecked = (_pendingHotkey.Modifiers & HotkeyConstants.MOD_WIN) != 0;
-        KeyCombo.SelectedValue = _pendingHotkey.VirtualKey;
+        _suppressAutoSave = true;
+        try
+        {
+            CtrlCheck.IsChecked = (_pendingHotkey.Modifiers & HotkeyConstants.MOD_CONTROL) != 0;
+            AltCheck.IsChecked = (_pendingHotkey.Modifiers & HotkeyConstants.MOD_ALT) != 0;
+            ShiftCheck.IsChecked = (_pendingHotkey.Modifiers & HotkeyConstants.MOD_SHIFT) != 0;
+            WinCheck.IsChecked = (_pendingHotkey.Modifiers & HotkeyConstants.MOD_WIN) != 0;
+            KeyCombo.SelectedValue = _pendingHotkey.VirtualKey;
+        }
+        finally
+        {
+            _suppressAutoSave = false;
+        }
     }
 
     private static bool IsHotkeyValid(HotkeyDefinition hotkey)

@@ -1,3 +1,4 @@
+using System.IO;
 using CursorCage.Events;
 using CursorCage.Models;
 using CursorCage.Services;
@@ -23,6 +24,8 @@ public sealed class CursorCageApp : IDisposable
         ScreenManager = new ScreenManager();
         SettingsManager = new SettingsManager();
         SettingsManager.LoadSettings();
+        if (!File.Exists(SettingsManager.SettingsFilePath))
+            SettingsManager.TrySaveSettings(out _);
         CursorManager = new CursorManager(EventBus, WindowManager, ScreenManager)
         {
             LockMode = LockTargetMode.ScreenUnderCursor

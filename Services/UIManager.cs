@@ -85,7 +85,13 @@ public sealed class UIManager : IDisposable
         }
 
         menu.Items.Add(new ToolStripSeparator());
-        menu.Items.Add(TranslationManager.GetString("StrQuit"), null, (_, _) => Application.Current.Shutdown());
+        menu.Items.Add(TranslationManager.GetString("StrQuit"), null, (_, _) =>
+        {
+            if (Application.Current is global::CursorCage.App app)
+                app.RequestShutdown();
+            else
+                Application.Current.Shutdown();
+        });
         return menu;
     }
 

@@ -17,6 +17,7 @@ public partial class MainWindow : Window
         SidebarVersionText.Text = "v" + AppInfo.DisplayVersion;
         NavFrame.Navigate(new HomePage(_app));
         Closing += MainWindow_Closing;
+        Closed += MainWindow_Closed;
     }
 
     public void NavigateToHome() => NavFrame.Navigate(new HomePage(_app));
@@ -29,8 +30,17 @@ public partial class MainWindow : Window
 
     private void MainWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
     {
+        if (System.Windows.Application.Current is App app && app.ShutdownRequested)
+            return;
         e.Cancel = true;
         Hide();
+    }
+
+    /// <summary>Si la fenêtre est réellement fermée sans sortie volontaire (cas anormal), on arrête le processus pour éviter un fantôme sans icône.</summary>
+    private void MainWindow_Closed(object? sender, EventArgs e)
+    {
+        if (System.Windows.Application.Current is App app && !app.ShutdownRequested)
+            app.RequestShutdown();
     }
 
     protected override void OnSourceInitialized(EventArgs e)

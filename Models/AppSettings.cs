@@ -8,6 +8,9 @@ public sealed class AppSettings
     public bool AutoLockOnGameLaunch { get; set; }
     public LockTargetMode LockTargetMode { get; set; } = LockTargetMode.ActiveWindow;
     public string Language { get; set; } = "en";
+
+    /// <summary>Null = non présent dans le JSON (comportement par défaut : activé).</summary>
+    public bool? CheckForUpdatesOnStartup { get; set; }
 }
 
 public sealed class HotkeyDefinition

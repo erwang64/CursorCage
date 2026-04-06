@@ -8,6 +8,8 @@
     <system:String x:Key="StrSettingsMenu">Settings</system:String>
     <system:String x:Key="StrOpenIcon">Open CursorCage</system:String>
     <system:String x:Key="StrQuit">Quit</system:String>
+    <system:String x:Key="StrCheckUpdatesMenu">Check for updates…</system:String>
+    <system:String x:Key="StrHotkeyRegisterFailed">Could not register the global shortcut (conflict or permissions). Change it in Settings.</system:String>
 
     <!-- Home Page -->
     <system:String x:Key="StrHomeTitle">Home</system:String>
@@ -23,13 +25,33 @@
 
     <!-- Settings Page -->
     <system:String x:Key="StrSettingsTitle">Settings</system:String>
+    <system:String x:Key="StrSettingsSubtitle">Language, shortcut, lock behaviour, and updates.</system:String>
+    <system:String x:Key="StrSettingsFileLabel">Configuration file</system:String>
     <system:String x:Key="StrLanguageLabel">Language</system:String>
-    <system:String x:Key="StrGlobalShortcutLabel">Global Shortcut</system:String>
-    <system:String x:Key="StrGlobalShortcutDesc">Enter your shortcut to lock / unlock the cursor.</system:String>
-    <system:String x:Key="StrOrChooseManuallyLabel">Or choose manually:</system:String>
+    <system:String x:Key="StrLanguageHint">Applies to the whole app as soon as you change it.</system:String>
+    <system:String x:Key="StrGlobalShortcutLabel">Global shortcut</system:String>
+    <system:String x:Key="StrGlobalShortcutDesc">Works from any app to lock or unlock the cursor.</system:String>
+    <system:String x:Key="StrShortcutCaptureHint">Click the field below, then press your combination (e.g. Ctrl+Shift+L). Esc restores the default.</system:String>
+    <system:String x:Key="StrShortcutManualHeader">Manual selection</system:String>
+    <system:String x:Key="StrOrChooseManuallyLabel">Modifiers and key:</system:String>
+    <system:String x:Key="StrSectionOtherTitle">More options</system:String>
     <system:String x:Key="StrLockZoneLabel">Lock Zone</system:String>
     <system:String x:Key="StrForcedModeDesc">Forced mode: locking of the current screen (multi-screen locked on the current monitor).</system:String>
     <system:String x:Key="StrAutoGameLockLabel">Auto-lock on game launch (coming soon)</system:String>
     <system:String x:Key="StrResetShortcutBtn">Reset Shortcut</system:String>
+    <system:String x:Key="StrCheckUpdatesStartup">Check for updates automatically on startup (GitHub releases)</system:String>
+
+    <!-- Updates -->
+    <system:String x:Key="StrUpdateBalloonTitle">CursorCage — update</system:String>
+    <system:String x:Key="StrUpdateBalloonTextFmt">Version {0} is available. Click this notification to open the download.</system:String>
+    <system:String x:Key="StrUpdateCheckFailed">Could not reach GitHub or no published release was found.</system:String>
+    <system:String x:Key="StrUpdateNoVersionTag">The latest release has no readable version tag (use e.g. v1.0.1).</system:String>
+    <system:String x:Key="StrUpdateAlreadyLatestFmt">You are up to date (current version {0}).</system:String>
+    <system:String x:Key="StrUpdateNoInstallerAsset">This release has no Windows installer (.exe) attached.</system:String>
+    <system:String x:Key="StrUpdateAvailableTitle">Update available</system:String>
+    <system:String x:Key="StrUpdateAvailablePromptFmt">New version {0} is available (you have {1}).{2}{2}Release notes:{2}{3}{2}{2}Download and run the installer now?</system:String>
+    <system:String x:Key="StrUpdateErrorFmt">Update check failed:&#x0a;{0}</system:String>
+    <system:String x:Key="StrUpdateDownloadFailedFmt">Download failed:&#x0a;{0}</system:String>
+    <system:String x:Key="StrUpdateCloseAppHint">When the installer starts, close CursorCage so files can be replaced, then follow the installer steps.</system:String>
 
 </ResourceDictionary>

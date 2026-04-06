@@ -5,12 +5,21 @@ namespace CursorCage.Services;
 
 public static class TranslationManager
 {
+    /// <summary>Codes pris en charge ; tout le reste retombe sur l’anglais.</summary>
+    public static string NormalizeLanguage(string? languageCode) =>
+        languageCode?.Trim().ToLowerInvariant() switch
+        {
+            "fr" => "fr",
+            _ => "en"
+        };
+
     public static void ApplyLanguage(string languageCode)
     {
+        var code = NormalizeLanguage(languageCode);
         var dict = new ResourceDictionary();
         try
         {
-            dict.Source = new Uri($"/Resources/Lang.{languageCode.ToLowerInvariant()}.xaml", UriKind.Relative);
+            dict.Source = new Uri($"/Resources/Lang.{code}.xaml", UriKind.Relative);
         }
         catch
         {

@@ -117,6 +117,9 @@ public sealed class SettingsManager
     {
         if (s.LockHotkey is null)
             s.LockHotkey = CloneHotkey(HotkeyDefinition.Default);
+        if (s.CheckForUpdatesOnStartup is null)
+            s.CheckForUpdatesOnStartup = true;
+        s.Language = TranslationManager.NormalizeLanguage(s.Language);
     }
 
     private static HotkeyDefinition CloneHotkey(HotkeyDefinition h) =>

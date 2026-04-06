@@ -1,4 +1,4 @@
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Interop;
 using CursorCage.Native;
 using CursorCage.Services;
@@ -14,6 +14,7 @@ public partial class MainWindow : Window
     {
         _app = app;
         InitializeComponent();
+        SidebarVersionText.Text = "v" + AppInfo.DisplayVersion;
         NavFrame.Navigate(new HomePage(_app));
         Closing += MainWindow_Closing;
     }
@@ -40,7 +41,7 @@ public partial class MainWindow : Window
             return;
         _app.HotkeyManager.AttachWindow(hwndSource.Handle);
         if (!_app.HotkeyManager.RegisterFromSettings())
-            _app.UiManager.ShowNotification("Impossible d'enregistrer le raccourci global (conflit ou droits). Modifiez-le dans Paramètres.");
+            _app.UiManager.ShowNotification(TranslationManager.GetString("StrHotkeyRegisterFailed"));
         hwndSource.AddHook(WndProc);
     }
 

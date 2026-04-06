@@ -8,6 +8,8 @@
     <system:String x:Key="StrSettingsMenu">Paramètres</system:String>
     <system:String x:Key="StrOpenIcon">Ouvrir CursorCage</system:String>
     <system:String x:Key="StrQuit">Quitter</system:String>
+    <system:String x:Key="StrCheckUpdatesMenu">Vérifier les mises à jour…</system:String>
+    <system:String x:Key="StrHotkeyRegisterFailed">Impossible d’enregistrer le raccourci global (conflit ou droits). Modifiez-le dans Paramètres.</system:String>
 
     <!-- Home Page -->
     <system:String x:Key="StrHomeTitle">Accueil</system:String>
@@ -23,13 +25,33 @@
 
     <!-- Settings Page -->
     <system:String x:Key="StrSettingsTitle">Paramètres</system:String>
+    <system:String x:Key="StrSettingsSubtitle">Langue, raccourci, zone de verrouillage et mises à jour.</system:String>
+    <system:String x:Key="StrSettingsFileLabel">Fichier de configuration</system:String>
     <system:String x:Key="StrLanguageLabel">Langue</system:String>
+    <system:String x:Key="StrLanguageHint">S’applique à toute l’app dès que vous changez la langue.</system:String>
     <system:String x:Key="StrGlobalShortcutLabel">Raccourci global</system:String>
-    <system:String x:Key="StrGlobalShortcutDesc">Saisissez votre raccourci pour verrouiller / déverrouiller le curseur.</system:String>
-    <system:String x:Key="StrOrChooseManuallyLabel">Ou choisissez manuellement :</system:String>
+    <system:String x:Key="StrGlobalShortcutDesc">Utilisable depuis n’importe quelle application pour verrouiller ou déverrouiller le curseur.</system:String>
+    <system:String x:Key="StrShortcutCaptureHint">Cliquez dans le champ ci-dessous, puis appuyez sur votre combinaison (ex. Ctrl+Maj+L). Échap rétablit la valeur par défaut.</system:String>
+    <system:String x:Key="StrShortcutManualHeader">Réglage manuel</system:String>
+    <system:String x:Key="StrOrChooseManuallyLabel">Modificateurs et touche :</system:String>
+    <system:String x:Key="StrSectionOtherTitle">Autres options</system:String>
     <system:String x:Key="StrLockZoneLabel">Zone de verrouillage</system:String>
     <system:String x:Key="StrForcedModeDesc">Mode forcé : verrouillage de l’écran courant (multi-écran bloqué sur le moniteur actuel).</system:String>
     <system:String x:Key="StrAutoGameLockLabel">Verrouillage automatique au lancement d'un jeu (bientôt)</system:String>
     <system:String x:Key="StrResetShortcutBtn">Réinitialiser le raccourci</system:String>
+    <system:String x:Key="StrCheckUpdatesStartup">Vérifier les mises à jour au démarrage (releases GitHub)</system:String>
+
+    <!-- Mises à jour -->
+    <system:String x:Key="StrUpdateBalloonTitle">CursorCage — mise à jour</system:String>
+    <system:String x:Key="StrUpdateBalloonTextFmt">La version {0} est disponible. Cliquez sur cette notification pour ouvrir le téléchargement.</system:String>
+    <system:String x:Key="StrUpdateCheckFailed">Impossible de joindre GitHub ou aucune release publiée.</system:String>
+    <system:String x:Key="StrUpdateNoVersionTag">La dernière release n’a pas d’étiquette de version lisible (utilisez p. ex. v1.0.1).</system:String>
+    <system:String x:Key="StrUpdateAlreadyLatestFmt">Vous êtes à jour (version actuelle {0}).</system:String>
+    <system:String x:Key="StrUpdateNoInstallerAsset">Cette release n’a pas d’installateur Windows (.exe) joint.</system:String>
+    <system:String x:Key="StrUpdateAvailableTitle">Mise à jour disponible</system:String>
+    <system:String x:Key="StrUpdateAvailablePromptFmt">La version {0} est disponible (vous avez la {1}).{2}{2}Notes de version :{2}{3}{2}{2}Télécharger et lancer l’installateur maintenant ?</system:String>
+    <system:String x:Key="StrUpdateErrorFmt">Échec de la vérification :&#x0a;{0}</system:String>
+    <system:String x:Key="StrUpdateDownloadFailedFmt">Échec du téléchargement :&#x0a;{0}</system:String>
+    <system:String x:Key="StrUpdateCloseAppHint">Quand l’installateur démarre, fermez CursorCage pour pouvoir remplacer les fichiers, puis suivez les étapes.</system:String>
 
 </ResourceDictionary>

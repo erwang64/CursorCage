@@ -12,6 +12,7 @@ public partial class App : System.Windows.Application
         MainWindow = window;
         Cage.AttachMainWindow(window);
         window.Show();
+        Cage.UpdateService.ScheduleStartupCheck();
     }
 
     protected override void OnExit(System.Windows.ExitEventArgs e)

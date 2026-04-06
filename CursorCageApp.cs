@@ -14,6 +14,7 @@ public sealed class CursorCageApp : IDisposable
     public SettingsManager SettingsManager { get; }
     public HotkeyManager HotkeyManager { get; }
     public UIManager UiManager { get; }
+    public GitHubUpdateService UpdateService { get; }
 
     private readonly Action<LockStateChanged> _onLockState;
 
@@ -34,19 +35,25 @@ public sealed class CursorCageApp : IDisposable
         SettingsManager.Current.LockTargetMode = LockTargetMode.ScreenUnderCursor;
         HotkeyManager = new HotkeyManager(EventBus, SettingsManager);
         UiManager = new UIManager();
+        UpdateService = new GitHubUpdateService(UiManager, SettingsManager);
         _onLockState = e => UiManager.UpdateTrayIcon(e.IsLocked);
         EventBus.Subscribe(_onLockState);
     }
 
     public void AttachMainWindow(MainWindow window)
     {
-        UiManager.InitializeTray(window);
+        UpdateService.SetDialogOwner(window);
+        UiManager.InitializeTray(window, () => _ = UpdateService.CheckManuallyAsync());
     }
+
+    /// <summary>À appeler après un changement de langue (menu icône zone de notification).</summary>
+    public void RefreshLanguageInTray() => UiManager.RebuildTrayMenu();
 
     public void Dispose()
     {
         HotkeyManager.Unregister();
         EventBus.Unsubscribe(_onLockState);
+        UpdateService.Dispose();
         UiManager.Dispose();
     }
 }

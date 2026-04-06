@@ -35,7 +35,8 @@ public partial class SettingsPage : Page
         HotkeyDisplay.Text = HotkeyFormatting.ToDisplayString(_pendingHotkey);
         SyncManualControlsFromPending();
         AutoGameCheck.IsChecked = _app.SettingsManager.Current.AutoLockOnGameLaunch;
-        SettingsPathText.Text = "Fichier : " + _app.SettingsManager.SettingsFilePath;
+        CheckUpdatesStartupCheck.IsChecked = _app.SettingsManager.Current.CheckForUpdatesOnStartup ?? true;
+        SettingsPathText.Text = _app.SettingsManager.SettingsFilePath;
         
         var lang = _app.SettingsManager.Current.Language;
         foreach (ComboBoxItem item in LanguageCombo.Items)
@@ -89,13 +90,17 @@ public partial class SettingsPage : Page
 
     private void KeyCombo_SelectionChanged(object sender, SelectionChangedEventArgs e) => ScheduleAutoSave();
 
+    private void CheckUpdatesStartup_Changed(object sender, RoutedEventArgs e) => ScheduleAutoSave();
+
     private void LanguageCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (!_loaded || _suppressAutoSave) return;
         if (LanguageCombo.SelectedItem is ComboBoxItem item && item.Tag is string lang)
         {
-            _app.SettingsManager.Current.Language = lang;
-            TranslationManager.ApplyLanguage(lang);
+            var normalized = TranslationManager.NormalizeLanguage(lang);
+            _app.SettingsManager.Current.Language = normalized;
+            TranslationManager.ApplyLanguage(normalized);
+            _app.RefreshLanguageInTray();
             ScheduleAutoSave();
         }
     }
@@ -160,6 +165,7 @@ public partial class SettingsPage : Page
         _app.SettingsManager.Current.LockHotkey = Clone(_pendingHotkey);
         _app.SettingsManager.Current.LockTargetMode = LockTargetMode.ScreenUnderCursor;
         _app.SettingsManager.Current.AutoLockOnGameLaunch = AutoGameCheck.IsChecked == true;
+        _app.SettingsManager.Current.CheckForUpdatesOnStartup = CheckUpdatesStartupCheck.IsChecked == true;
 
         if (!_app.SettingsManager.TrySaveSettings(out var err))
         {

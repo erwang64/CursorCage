@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -7,6 +7,18 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
+    <ApplicationIcon>Logo\Logo_blanc.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Logo\Logo_blanc.png" />
+    <None Remove="Logo\Logo_blanc.svg" />
+    <None Remove="Logo\Logo_fond_blanc_full.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Logo\Logo_blanc.svg" />
+    <Resource Include="Logo\Logo_fond_blanc_full.png" />
+  </ItemGroup>
 
 </Project>

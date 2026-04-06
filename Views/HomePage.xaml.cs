@@ -22,10 +22,18 @@ public partial class HomePage : Page
     private void RefreshUi()
     {
         var locked = _app.CursorManager.IsLocked;
-        StatusLabel.Text = locked ? "État : verrouillé" : "État : déverrouillé";
+        StatusLabel.Text = locked ? "ÉTAT : VERROUILLÉ" : "ÉTAT : DÉVERROUILLÉ";
+        StatusLabel.Foreground = locked 
+            ? new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(46, 204, 113)) 
+            : new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(160, 160, 160));
+        
         ModeLabel.Text = "Cible : écran courant (autres écrans bloqués)";
+        
         BtnLock.IsEnabled = !locked;
         BtnUnlock.IsEnabled = locked;
+        
+        BtnLock.Style = (Style)FindResource(locked ? typeof(System.Windows.Controls.Button) : "AccentButton");
+        BtnUnlock.Style = (Style)FindResource(!locked ? typeof(System.Windows.Controls.Button) : "AccentButton");
     }
 
     private void BtnLock_Click(object sender, RoutedEventArgs e)

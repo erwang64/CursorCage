@@ -48,8 +48,16 @@ public sealed class UIManager : IDisposable
     {
         if (_tray is null)
             return;
-        _tray.Icon = isLocked ? SystemIcons.Shield : SystemIcons.Application;
-        _tray.Text = isLocked ? "CursorCage — verrouillé" : "CursorCage — déverrouillé";
+        try 
+        {
+            var appIcon = System.Drawing.Icon.ExtractAssociatedIcon(Environment.ProcessPath!) ?? SystemIcons.Application;
+            _tray.Icon = isLocked ? SystemIcons.Shield : appIcon;
+        } 
+        catch 
+        {
+            _tray.Icon = isLocked ? SystemIcons.Shield : SystemIcons.Application;
+        }
+        _tray.Text = isLocked ? "CursorCage — VERROUILLÉ" : "CursorCage — Déverrouillé";
     }
 
     public void ShowNotification(string message)

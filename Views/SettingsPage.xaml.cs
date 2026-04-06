@@ -36,6 +36,17 @@ public partial class SettingsPage : Page
         SyncManualControlsFromPending();
         AutoGameCheck.IsChecked = _app.SettingsManager.Current.AutoLockOnGameLaunch;
         SettingsPathText.Text = "Fichier : " + _app.SettingsManager.SettingsFilePath;
+        
+        var lang = _app.SettingsManager.Current.Language;
+        foreach (ComboBoxItem item in LanguageCombo.Items)
+        {
+            if (item.Tag is string itemLang && itemLang == lang)
+            {
+                LanguageCombo.SelectedItem = item;
+                break;
+            }
+        }
+        
         HotkeyStatus.Visibility = Visibility.Collapsed;
         _loaded = true;
     }
@@ -77,6 +88,17 @@ public partial class SettingsPage : Page
     private void ModifierOrKey_Changed(object sender, RoutedEventArgs e) => ScheduleAutoSave();
 
     private void KeyCombo_SelectionChanged(object sender, SelectionChangedEventArgs e) => ScheduleAutoSave();
+
+    private void LanguageCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (!_loaded || _suppressAutoSave) return;
+        if (LanguageCombo.SelectedItem is ComboBoxItem item && item.Tag is string lang)
+        {
+            _app.SettingsManager.Current.Language = lang;
+            TranslationManager.ApplyLanguage(lang);
+            ScheduleAutoSave();
+        }
+    }
 
     private void ResetHotkey_Click(object sender, RoutedEventArgs e)
     {

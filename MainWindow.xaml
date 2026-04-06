@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="CursorCage"
+        Title="{DynamicResource StrAppTitle}"
         Height="620" Width="950"
         MinHeight="500" MinWidth="750"
         Background="{DynamicResource BgDark}"
@@ -39,8 +39,8 @@
                 </Border>
 
                 <StackPanel Margin="12,0,12,0">
-                    <Button x:Name="BtnHome" Content="Accueil" Margin="0,0,0,8" Style="{StaticResource SidebarButton}" Click="BtnHome_Click" />
-                    <Button x:Name="BtnSettings" Content="Paramètres" Style="{StaticResource SidebarButton}" Click="BtnSettings_Click" />
+                    <Button x:Name="BtnHome" Content="{DynamicResource StrHomeMenu}" Margin="0,0,0,8" Style="{StaticResource SidebarButton}" Click="BtnHome_Click" />
+                    <Button x:Name="BtnSettings" Content="{DynamicResource StrSettingsMenu}" Style="{StaticResource SidebarButton}" Click="BtnSettings_Click" />
                 </StackPanel>
             </StackPanel>
         </Border>

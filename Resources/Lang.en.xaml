@@ -1,0 +1,35 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+    <!-- Common UI Strings -->
+    <system:String x:Key="StrAppTitle">CursorCage</system:String>
+    <system:String x:Key="StrHomeMenu">Home</system:String>
+    <system:String x:Key="StrSettingsMenu">Settings</system:String>
+    <system:String x:Key="StrOpenIcon">Open CursorCage</system:String>
+    <system:String x:Key="StrQuit">Quit</system:String>
+
+    <!-- Home Page -->
+    <system:String x:Key="StrHomeTitle">Home</system:String>
+    <system:String x:Key="StrHomeDesc">Restricts the cursor to the active window or the screen under the pointer, useful for multiple monitors while gaming. Use the global shortcut (Settings) to lock / unlock without leaving your game.</system:String>
+    <system:String x:Key="StrStatusLocked">STATUS : LOCKED</system:String>
+    <system:String x:Key="StrStatusUnlocked">STATUS : UNLOCKED</system:String>
+    <system:String x:Key="StrTargetScreen">Target: current screen (other screens locked)</system:String>
+    <system:String x:Key="StrBtnLock">Lock</system:String>
+    <system:String x:Key="StrBtnUnlock">Unlock</system:String>
+    <system:String x:Key="StrBtnToggle">Toggle (shortcut)</system:String>
+    <system:String x:Key="StrTrayLocked">CursorCage — LOCKED</system:String>
+    <system:String x:Key="StrTrayUnlocked">CursorCage — Unlocked</system:String>
+
+    <!-- Settings Page -->
+    <system:String x:Key="StrSettingsTitle">Settings</system:String>
+    <system:String x:Key="StrLanguageLabel">Language</system:String>
+    <system:String x:Key="StrGlobalShortcutLabel">Global Shortcut</system:String>
+    <system:String x:Key="StrGlobalShortcutDesc">Enter your shortcut to lock / unlock the cursor.</system:String>
+    <system:String x:Key="StrOrChooseManuallyLabel">Or choose manually:</system:String>
+    <system:String x:Key="StrLockZoneLabel">Lock Zone</system:String>
+    <system:String x:Key="StrForcedModeDesc">Forced mode: locking of the current screen (multi-screen locked on the current monitor).</system:String>
+    <system:String x:Key="StrAutoGameLockLabel">Auto-lock on game launch (coming soon)</system:String>
+    <system:String x:Key="StrResetShortcutBtn">Reset Shortcut</system:String>
+
+</ResourceDictionary>

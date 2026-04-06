@@ -1,0 +1,35 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+    <!-- Common UI Strings -->
+    <system:String x:Key="StrAppTitle">CursorCage</system:String>
+    <system:String x:Key="StrHomeMenu">Accueil</system:String>
+    <system:String x:Key="StrSettingsMenu">Paramètres</system:String>
+    <system:String x:Key="StrOpenIcon">Ouvrir CursorCage</system:String>
+    <system:String x:Key="StrQuit">Quitter</system:String>
+
+    <!-- Home Page -->
+    <system:String x:Key="StrHomeTitle">Accueil</system:String>
+    <system:String x:Key="StrHomeDesc">Limite le curseur à la fenêtre active ou à l’écran sous le pointeur, utile sur plusieurs moniteurs en jeu. Utilisez le raccourci global (Paramètres) pour verrouiller / déverrouiller sans quitter le jeu.</system:String>
+    <system:String x:Key="StrStatusLocked">ÉTAT : VERROUILLÉ</system:String>
+    <system:String x:Key="StrStatusUnlocked">ÉTAT : DÉVERROUILLÉ</system:String>
+    <system:String x:Key="StrTargetScreen">Cible : écran courant (autres écrans bloqués)</system:String>
+    <system:String x:Key="StrBtnLock">Verrouiller</system:String>
+    <system:String x:Key="StrBtnUnlock">Déverrouiller</system:String>
+    <system:String x:Key="StrBtnToggle">Basculer (raccourci)</system:String>
+    <system:String x:Key="StrTrayLocked">CursorCage — VERROUILLÉ</system:String>
+    <system:String x:Key="StrTrayUnlocked">CursorCage — Déverrouillé</system:String>
+
+    <!-- Settings Page -->
+    <system:String x:Key="StrSettingsTitle">Paramètres</system:String>
+    <system:String x:Key="StrLanguageLabel">Langue</system:String>
+    <system:String x:Key="StrGlobalShortcutLabel">Raccourci global</system:String>
+    <system:String x:Key="StrGlobalShortcutDesc">Saisissez votre raccourci pour verrouiller / déverrouiller le curseur.</system:String>
+    <system:String x:Key="StrOrChooseManuallyLabel">Ou choisissez manuellement :</system:String>
+    <system:String x:Key="StrLockZoneLabel">Zone de verrouillage</system:String>
+    <system:String x:Key="StrForcedModeDesc">Mode forcé : verrouillage de l’écran courant (multi-écran bloqué sur le moniteur actuel).</system:String>
+    <system:String x:Key="StrAutoGameLockLabel">Verrouillage automatique au lancement d'un jeu (bientôt)</system:String>
+    <system:String x:Key="StrResetShortcutBtn">Réinitialiser le raccourci</system:String>
+
+</ResourceDictionary>

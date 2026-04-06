@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using CursorCage.Events;
+using CursorCage.Services;
 
 namespace CursorCage.Views;
 
@@ -22,12 +23,12 @@ public partial class HomePage : Page
     private void RefreshUi()
     {
         var locked = _app.CursorManager.IsLocked;
-        StatusLabel.Text = locked ? "ÉTAT : VERROUILLÉ" : "ÉTAT : DÉVERROUILLÉ";
+        StatusLabel.Text = locked ? TranslationManager.GetString("StrStatusLocked") : TranslationManager.GetString("StrStatusUnlocked");
         StatusLabel.Foreground = locked 
             ? new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(46, 204, 113)) 
             : new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(160, 160, 160));
         
-        ModeLabel.Text = "Cible : écran courant (autres écrans bloqués)";
+        ModeLabel.Text = TranslationManager.GetString("StrTargetScreen");
         
         BtnLock.IsEnabled = !locked;
         BtnUnlock.IsEnabled = locked;

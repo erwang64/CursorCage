@@ -7,6 +7,7 @@ public sealed class AppSettings
     public HotkeyDefinition LockHotkey { get; set; } = HotkeyDefinition.Default;
     public bool AutoLockOnGameLaunch { get; set; }
     public LockTargetMode LockTargetMode { get; set; } = LockTargetMode.ActiveWindow;
+    public string Language { get; set; } = "en";
 }
 
 public sealed class HotkeyDefinition

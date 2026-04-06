@@ -7,59 +7,34 @@
       Title="Paramètres">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="40">
-            <TextBlock Text="Paramètres"
-                       FontSize="32"
-                       FontWeight="Bold"
-                       Foreground="{StaticResource MainText}"
-                       Margin="0,0,0,16" />
+            <TextBlock Text="{DynamicResource StrSettingsTitle}"
+                       FontSize="32" FontWeight="Bold" Foreground="{StaticResource MainText}" Margin="0,0,0,16" />
 
             <TextBlock x:Name="SettingsPathText"
-                       TextWrapping="Wrap"
-                       Foreground="{StaticResource SecondaryText}"
-                       FontSize="13"
-                       Margin="0,0,0,32" />
+                       TextWrapping="Wrap" Foreground="{StaticResource SecondaryText}" FontSize="13" Margin="0,0,0,32" />
+
+            <!-- Language Section -->
+            <Border Background="{StaticResource BgLighter}" BorderBrush="{StaticResource BorderMedium}" BorderThickness="1" CornerRadius="12" Padding="24" Margin="0,0,0,24">
+                <StackPanel>
+                    <TextBlock Text="{DynamicResource StrLanguageLabel}" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource MainText}" Margin="0,0,0,8" />
+                    <ComboBox x:Name="LanguageCombo" Width="200" HorizontalAlignment="Left" SelectionChanged="LanguageCombo_SelectionChanged">
+                        <ComboBoxItem Tag="en" Content="English" />
+                        <ComboBoxItem Tag="fr" Content="Français" />
+                    </ComboBox>
+                </StackPanel>
+            </Border>
 
             <!-- Raccourci Global Section -->
-            <Border Background="{StaticResource BgLighter}"
-                    BorderBrush="{StaticResource BorderMedium}"
-                    BorderThickness="1"
-                    CornerRadius="12"
-                    Padding="24"
-                    Margin="0,0,0,24">
+            <Border Background="{StaticResource BgLighter}" BorderBrush="{StaticResource BorderMedium}" BorderThickness="1" CornerRadius="12" Padding="24" Margin="0,0,0,24">
                 <StackPanel>
-                    <TextBlock Text="Raccourci global"
-                               FontSize="18"
-                               FontWeight="SemiBold"
-                               Foreground="{StaticResource MainText}"
-                               Margin="0,0,0,8" />
-                    <TextBlock TextWrapping="Wrap"
-                               Foreground="{StaticResource SecondaryText}"
-                               FontSize="14"
-                               Margin="0,0,0,16"
-                               Text="Saisissez votre raccourci pour verrouiller / déverrouiller le curseur." />
+                    <TextBlock Text="{DynamicResource StrGlobalShortcutLabel}" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource MainText}" Margin="0,0,0,8" />
+                    <TextBlock TextWrapping="Wrap" Foreground="{StaticResource SecondaryText}" FontSize="14" Margin="0,0,0,16" Text="{DynamicResource StrGlobalShortcutDesc}" />
 
-                    <Border BorderBrush="{StaticResource Accent}"
-                            BorderThickness="2"
-                            Background="{StaticResource BgDarker}"
-                            CornerRadius="8"
-                            Padding="16"
-                            Margin="0,0,0,16">
-                        <TextBox x:Name="HotkeyDisplay"
-                                 IsReadOnly="True"
-                                 IsReadOnlyCaretVisible="False"
-                                 Focusable="True"
-                                 PreviewKeyDown="HotkeyDisplay_PreviewKeyDown"
-                                 FontSize="18"
-                                 FontWeight="Bold"
-                                 Foreground="{StaticResource MainText}"
-                                 Background="Transparent"
-                                 BorderThickness="0"
-                                 Text="(aucun)" />
+                    <Border BorderBrush="{StaticResource Accent}" BorderThickness="2" Background="{StaticResource BgDarker}" CornerRadius="8" Padding="16" Margin="0,0,0,16">
+                        <TextBox x:Name="HotkeyDisplay" IsReadOnly="True" IsReadOnlyCaretVisible="False" Focusable="True" PreviewKeyDown="HotkeyDisplay_PreviewKeyDown" FontSize="18" FontWeight="Bold" Foreground="{StaticResource MainText}" Background="Transparent" BorderThickness="0" Text="(aucun)" />
                     </Border>
 
-                    <TextBlock Text="Ou choisissez manuellement :"
-                               Foreground="{StaticResource SecondaryText}"
-                               Margin="0,0,0,12" />
+                    <TextBlock Text="{DynamicResource StrOrChooseManuallyLabel}" Foreground="{StaticResource SecondaryText}" Margin="0,0,0,12" />
                     <WrapPanel Margin="0,0,0,12">
                         <CheckBox x:Name="CtrlCheck" Content="Ctrl" Margin="0,0,16,0" Checked="ModifierOrKey_Changed" Unchecked="ModifierOrKey_Changed" Foreground="{StaticResource MainText}"/>
                         <CheckBox x:Name="AltCheck" Content="Alt" Margin="0,0,16,0" Checked="ModifierOrKey_Changed" Unchecked="ModifierOrKey_Changed" Foreground="{StaticResource MainText}"/>
@@ -67,51 +42,23 @@
                         <CheckBox x:Name="WinCheck" Content="Win" Checked="ModifierOrKey_Changed" Unchecked="ModifierOrKey_Changed" Foreground="{StaticResource MainText}"/>
                     </WrapPanel>
 
-                    <ComboBox x:Name="KeyCombo"
-                              Width="300"
-                              HorizontalAlignment="Left"
-                              Margin="0,0,0,16"
-                              DisplayMemberPath="Label"
-                              SelectedValuePath="VirtualKey"
-                              SelectionChanged="KeyCombo_SelectionChanged" />
+                    <ComboBox x:Name="KeyCombo" Width="300" HorizontalAlignment="Left" Margin="0,0,0,16" DisplayMemberPath="Label" SelectedValuePath="VirtualKey" SelectionChanged="KeyCombo_SelectionChanged" />
 
-                    <TextBlock x:Name="HotkeyStatus"
-                               Foreground="#FF6B6B"
-                               TextWrapping="Wrap"
-                               Margin="0,0,0,0"
-                               Visibility="Collapsed" />
+                    <TextBlock x:Name="HotkeyStatus" Foreground="#FF6B6B" TextWrapping="Wrap" Visibility="Collapsed" />
                 </StackPanel>
             </Border>
 
             <!-- Mode forcée Section -->
-            <Border Background="{StaticResource BgLighter}"
-                    BorderBrush="{StaticResource BorderMedium}"
-                    BorderThickness="1"
-                    CornerRadius="12"
-                    Padding="24"
-                    Margin="0,0,0,24">
+            <Border Background="{StaticResource BgLighter}" BorderBrush="{StaticResource BorderMedium}" BorderThickness="1" CornerRadius="12" Padding="24" Margin="0,0,0,24">
                 <StackPanel>
-                    <TextBlock Text="Zone de verrouillage"
-                               FontSize="18"
-                               FontWeight="SemiBold"
-                               Foreground="{StaticResource MainText}"
-                               Margin="0,0,0,8" />
-                    <TextBlock TextWrapping="Wrap"
-                               Foreground="{StaticResource SecondaryText}"
-                               Text="Mode forcé : verrouillage de l’écran courant (multi-écran bloqué sur le moniteur actuel)." />
+                    <TextBlock Text="{DynamicResource StrLockZoneLabel}" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource MainText}" Margin="0,0,0,8" />
+                    <TextBlock TextWrapping="Wrap" Foreground="{StaticResource SecondaryText}" Text="{DynamicResource StrForcedModeDesc}" />
                 </StackPanel>
             </Border>
 
-            <CheckBox x:Name="AutoGameCheck"
-                      Content="Verrouillage automatique au lancement d'un jeu (bientôt)"
-                      IsEnabled="False"
-                      Foreground="{StaticResource SecondaryText}"
-                      Margin="0,0,0,24" />
+            <CheckBox x:Name="AutoGameCheck" Content="{DynamicResource StrAutoGameLockLabel}" IsEnabled="False" Foreground="{StaticResource SecondaryText}" Margin="0,0,0,24" />
 
-            <Button Content="Réinitialiser le raccourci"
-                    HorizontalAlignment="Left"
-                    Padding="24,12"
-                    Click="ResetHotkey_Click" />
+            <Button Content="{DynamicResource StrResetShortcutBtn}" HorizontalAlignment="Left" Padding="24,12" Click="ResetHotkey_Click" />
         </StackPanel>
     </ScrollViewer>
 </Page>

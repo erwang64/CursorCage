@@ -25,15 +25,15 @@ public sealed class UIManager : IDisposable
     private ContextMenuStrip BuildMenu()
     {
         var menu = new ContextMenuStrip();
-        menu.Items.Add("Ouvrir", null, (_, _) => ShowMainWindow());
-        menu.Items.Add("Paramètres", null, (_, _) =>
+        menu.Items.Add(TranslationManager.GetString("StrOpenIcon"), null, (_, _) => ShowMainWindow());
+        menu.Items.Add(TranslationManager.GetString("StrSettingsMenu"), null, (_, _) =>
         {
             ShowMainWindow();
             if (_mainWindow is MainWindow mw)
                 mw.NavigateToSettings();
         });
         menu.Items.Add(new ToolStripSeparator());
-        menu.Items.Add("Quitter", null, (_, _) => Application.Current.Shutdown());
+        menu.Items.Add(TranslationManager.GetString("StrQuit"), null, (_, _) => Application.Current.Shutdown());
         return menu;
     }
 
@@ -57,7 +57,7 @@ public sealed class UIManager : IDisposable
         {
             _tray.Icon = isLocked ? SystemIcons.Shield : SystemIcons.Application;
         }
-        _tray.Text = isLocked ? "CursorCage — VERROUILLÉ" : "CursorCage — Déverrouillé";
+        _tray.Text = isLocked ? TranslationManager.GetString("StrTrayLocked") : TranslationManager.GetString("StrTrayUnlocked");
     }
 
     public void ShowNotification(string message)

@@ -1,4 +1,4 @@
-using CursorCage.Events;
+﻿using CursorCage.Events;
 using CursorCage.Models;
 using CursorCage.Native;
 
@@ -15,9 +15,11 @@ public sealed class CursorManager
     private readonly IEventBus _eventBus;
     private readonly ScreenManager _screenManager;
     private readonly object _clipLoopLock = new();
+    private readonly object _stateLock = new();
     private CancellationTokenSource? _clipLoopCts;
     private Task? _clipLoopTask;
     private bool _highResTimerActive;
+    private bool _isLocked;
     private string? _lockedScreenId;
     private RECT? _lastClipRect;
     private LockTargetMode _lockMode = LockTargetMode.ScreenUnderCursor;
@@ -29,7 +31,14 @@ public sealed class CursorManager
         _eventBus.Subscribe<ToggleLockRequested>(_ => ToggleLock());
     }
 
-    public bool IsLocked { get; private set; }
+    public bool IsLocked
+    {
+        get
+        {
+            lock (_stateLock)
+                return _isLocked;
+        }
+    }
 
     public LockTargetMode LockMode
     {
@@ -44,12 +53,18 @@ public sealed class CursorManager
     public void LockToScreen(string screenId)
     {
         var bounds = _screenManager.GetScreenBounds(screenId);
-        if (bounds is not { } rect)
+        if (bounds is not { } rect || !IsUsableRect(rect))
             return;
-        _lastClipRect = rect;
-        _lockedScreenId = screenId;
-        var wasUnlocked = !IsLocked;
-        IsLocked = true;
+
+        bool wasUnlocked;
+        lock (_stateLock)
+        {
+            _lastClipRect = rect;
+            _lockedScreenId = screenId;
+            wasUnlocked = !_isLocked;
+            _isLocked = true;
+        }
+
         ApplyClipOnce();
         StartClipLoop();
         if (wasUnlocked)
@@ -59,14 +74,19 @@ public sealed class CursorManager
     public void Unlock()
     {
         StopClipLoop();
-        _lockedScreenId = null;
-        _lastClipRect = null;
-        Win32.ClipCursorRelease(0);
-        if (IsLocked)
+
+        bool wasLocked;
+        lock (_stateLock)
         {
-            IsLocked = false;
-            _eventBus.Publish(new LockStateChanged(false));
+            _lockedScreenId = null;
+            _lastClipRect = null;
+            wasLocked = _isLocked;
+            _isLocked = false;
         }
+
+        Win32.ClipCursorRelease(0);
+        if (wasLocked)
+            _eventBus.Publish(new LockStateChanged(false));
     }
 
     public void LockUnderCurrentMode()
@@ -88,18 +108,24 @@ public sealed class CursorManager
     {
         if (!Win32.GetCursorPos(out var pt))
             return;
+
         var rect = _screenManager.GetBoundsForPoint(pt.X, pt.Y);
-        if (rect is not { } r)
+        if (rect is not { } r || !IsUsableRect(r))
             return;
 
         var id = _screenManager.GetScreenIdContainingPoint(pt.X, pt.Y);
         if (id is null)
             return;
 
-        _lastClipRect = r;
-        _lockedScreenId = id;
-        var wasUnlocked = !IsLocked;
-        IsLocked = true;
+        bool wasUnlocked;
+        lock (_stateLock)
+        {
+            _lastClipRect = r;
+            _lockedScreenId = id;
+            wasUnlocked = !_isLocked;
+            _isLocked = true;
+        }
+
         ApplyClipOnce();
         StartClipLoop();
         if (wasUnlocked)
@@ -140,6 +166,7 @@ public sealed class CursorManager
         _clipLoopCts?.Dispose();
         _clipLoopCts = null;
         _clipLoopTask = null;
+
         if (_highResTimerActive)
         {
             _ = Win32.timeEndPeriod(1);
@@ -153,24 +180,25 @@ public sealed class CursorManager
         {
             try
             {
-                if (!IsLocked)
+                bool isLocked;
+                RECT? lastRect;
+                lock (_stateLock)
+                {
+                    isLocked = _isLocked;
+                    lastRect = _lastClipRect;
+                }
+
+                if (!isLocked)
                     break;
 
-                RECT? full = null;
-                if (_lockedScreenId is not null)
-                    full = _screenManager.GetScreenBounds(_lockedScreenId);
-                full ??= _lastClipRect;
-                if (full is not { } f)
+                // Important: on garde un rectangle fixe capturé à l'activation.
+                // Recalculer le monitor en boucle peut produire des changements instables
+                // en plein écran (menus/alt-state) et bloquer la souris au centre.
+                if (lastRect is not { } f || !IsUsableRect(f))
                     break;
 
                 var clip = ToClipRect(f);
                 Win32.ClipCursorRect(ref clip);
-
-                if (Win32.GetCursorPos(out var pt) && !PointInRect(pt, clip))
-                {
-                    var clamped = ClampToRect(pt, clip);
-                    Win32.SetCursorPos(clamped.X, clamped.Y);
-                }
             }
             catch
             {
@@ -183,9 +211,14 @@ public sealed class CursorManager
 
     private void ApplyClipOnce()
     {
-        if (_lastClipRect is not { } full)
+        RECT? full;
+        lock (_stateLock)
+            full = _lastClipRect;
+
+        if (full is not { } f || !IsUsableRect(f))
             return;
-        var clip = ToClipRect(full);
+
+        var clip = ToClipRect(f);
         Win32.ClipCursorRect(ref clip);
     }
 
@@ -194,6 +227,7 @@ public sealed class CursorManager
         var m = ClipInsetPx;
         if (full.Width <= 2 * m + 2 || full.Height <= 2 * m + 2)
             m = 0;
+
         return new RECT
         {
             Left = full.Left + m,
@@ -203,18 +237,9 @@ public sealed class CursorManager
         };
     }
 
-    /// <summary><paramref name="r"/> : <c>Right</c> / <c>Bottom</c> exclus (comme le hit-test Windows).</summary>
-    private static bool PointInRect(Win32.POINT p, RECT r) =>
-        p.X >= r.Left && p.X < r.Right && p.Y >= r.Top && p.Y < r.Bottom;
-
-    private static Win32.POINT ClampToRect(Win32.POINT p, RECT r)
+    private static bool IsUsableRect(RECT r)
     {
-        var maxX = Math.Max(r.Left, r.Right - 1);
-        var maxY = Math.Max(r.Top, r.Bottom - 1);
-        return new Win32.POINT
-        {
-            X = Math.Clamp(p.X, r.Left, maxX),
-            Y = Math.Clamp(p.Y, r.Top, maxY)
-        };
+        const int minSize = 64;
+        return r.Width >= minSize && r.Height >= minSize;
     }
 }

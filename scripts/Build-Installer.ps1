@@ -36,12 +36,12 @@ if (-not $iscc -or -not (Test-Path $iscc)) {
     Write-Host ""
     Write-Host "Publication OK : $publishDir" -ForegroundColor Green
     Write-Host "Inno Setup 6 introuvable. Installez-le puis :" -ForegroundColor Yellow
-    Write-Host '  & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" Installer\CursorCage.iss' -ForegroundColor Gray
+    Write-Host '  & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" CursorCage.iss' -ForegroundColor Gray
     exit 0
 }
 
 Write-Host "Inno Setup ($iscc)..." -ForegroundColor Cyan
-& $iscc (Join-Path $root "Installer\CursorCage.iss")
+& $iscc (Join-Path $root "CursorCage.iss")
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 Write-Host ""

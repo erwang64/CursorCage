@@ -21,6 +21,21 @@
 
 ---
 
+## Why this app exists
+
+On multi-monitor setups, fast mouse movement can accidentally leave the game window/screen, causing unwanted desktop clicks, focus loss, or alt-tab-like interruptions.
+
+**CursorCage solves this by clipping the cursor to the selected screen while you play**, and lets you toggle lock/unlock instantly with a global hotkey.
+
+## How it works (30 seconds)
+
+1. Start CursorCage.
+2. Set your preferred hotkey in **Settings** (example: `Ctrl+Shift+L`).
+3. In-game, press the hotkey to lock to the current screen.
+4. Press the hotkey again to unlock.
+
+---
+
 ## Features
 
 - **Cursor lock** to the target area (screen under the pointer — current project behaviour).
@@ -33,7 +48,8 @@
 ## Requirements
 
 - **Windows 10/11** (x64)
-- [**.NET 10 SDK**](https://dotnet.microsoft.com/download) (to build from source)
+- **For end users:** no manual .NET installation required when using `CursorCage-Setup.exe` (installer is built from a self-contained publish).
+- [**.NET 10 SDK**](https://dotnet.microsoft.com/download) is only required if you want to build the project from source.
 
 ## Build
 
@@ -44,6 +60,11 @@ dotnet build -c Release
 ```
 
 The executable is under `bin/Release/net10.0-windows/`.
+
+## Demo / Screenshots
+
+Media preview (GIF/video) will be added in upcoming releases.  
+For now, see the usage steps above and the in-app pages (**Home** / **Settings**).
 
 ## Installer (.exe)
 

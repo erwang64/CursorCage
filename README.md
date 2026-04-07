@@ -61,10 +61,23 @@ dotnet build -c Release
 
 The executable is under `bin/Release/net10.0-windows/`.
 
-## Demo / Screenshots
+## Screenshots
 
-Media preview (GIF/video) will be added in upcoming releases.  
-For now, see the usage steps above and the in-app pages (**Home** / **Settings**).
+**Home Page**
+
+Unlocked mode
+![Home screen](assets/screenshots/home_unlock.png)
+
+locked mode
+![Home screen](assets/screenshots/home_lock.png)
+
+**Settings Page**
+
+![Settings screen](assets/screenshots/setting_1.png)
+
+![Settings screen](assets/screenshots/setting_2.png)
+
+
 
 ## Installer (.exe)
 

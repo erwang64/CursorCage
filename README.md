@@ -4,7 +4,7 @@
 
 # CursorCage
 
-**Limitez le curseur à l’écran ou à la fenêtre active** — pratique pour le jeu sur **multi-moniteurs**. Verrouillez / déverrouillez avec un **raccourci global**, sans quitter votre jeu.
+**Keep the cursor on the current screen or within the active window** — handy for **multi-monitor gaming**. Lock / unlock with a **global shortcut** without leaving your game.
 
 <br/>
 
@@ -21,21 +21,21 @@
 
 ---
 
-## Fonctionnalités
+## Features
 
-- **Verrouillage du curseur** sur la zone cible (écran sous le pointeur, mode actuel du projet).
-- **Raccourci clavier global** configurable (paramètres).
-- **Icône dans la zone de notification** : ouvrir l’app, paramètres, quitter, notifications.
-- **Interface WPF** sombre, **français** et **anglais**.
-- **Mise à jour** optionnelle via les **releases GitHub** (vérification au démarrage ou menu).
-- **Installateur Windows** (Inno Setup) : `CursorCage-Setup.exe`.
+- **Cursor lock** to the target area (screen under the pointer — current project behaviour).
+- Configurable **global keyboard shortcut** (Settings).
+- **Notification area icon**: open the app, settings, quit, balloon tips.
+- Dark **WPF** UI — **English** and **French**.
+- Optional **updates** via **GitHub releases** (check on startup or from the tray menu).
+- **Windows installer** (Inno Setup): `CursorCage-Setup.exe`.
 
-## Prérequis
+## Requirements
 
 - **Windows 10/11** (x64)
-- [**SDK .NET 10**](https://dotnet.microsoft.com/download) (pour compiler depuis les sources)
+- [**.NET 10 SDK**](https://dotnet.microsoft.com/download) (to build from source)
 
-## Compiler
+## Build
 
 ```bash
 git clone https://github.com/erwang64/CursorCage.git
@@ -43,43 +43,43 @@ cd CursorCage
 dotnet build -c Release
 ```
 
-L’exécutable se trouve sous `bin/Release/net10.0-windows/`.
+The executable is under `bin/Release/net10.0-windows/`.
 
-## Installateur (.exe)
+## Installer (.exe)
 
-1. Installez [Inno Setup 6](https://jrsoftware.org/isinfo.php).
-2. Depuis la racine du dépôt :
+1. Install [Inno Setup 6](https://jrsoftware.org/isinfo.php).
+2. From the repository root:
 
 ```powershell
 .\scripts\Build-Installer.ps1
 ```
 
-Le script publie l’app en **self-contained** `win-x64` puis lance `ISCC` sur **`CursorCage.iss`**.  
-Résultat : `artifacts/installer/CursorCage-Setup.exe` (à joindre aux releases GitHub pour les mises à jour intégrées).
+The script **self-contained**-publishes the app for `win-x64`, then runs `ISCC` on **`CursorCage.iss`**.  
+Output: `artifacts/installer/CursorCage-Setup.exe` (attach this to GitHub releases for the in-app updater).
 
-> Pensez à aligner la version dans **`CursorCage.csproj`** (`<Version>`) et **`CursorCage.iss`** (`#define MyAppVersion`).
+> Keep the version in sync in **`CursorCage.csproj`** (`<Version>`) and **`CursorCage.iss`** (`#define MyAppVersion`).
 
-## Structure du projet
+## Project layout
 
-| Élément | Rôle |
-|--------|------|
-| `Views/` | Pages WPF (accueil, paramètres) |
-| `Services/` | Raccourcis, curseur, tray, mises à jour GitHub, réglages |
-| `Native/` | P/Invoke Win32 |
-| `Resources/` | Dictionnaires de traduction `Lang.en.xaml` / `Lang.fr.xaml` |
-| `CursorCage.iss` | Script Inno Setup |
-| `scripts/Build-Installer.ps1` | Publication + build de l’installateur |
+| Path | Purpose |
+|------|---------|
+| `Views/` | WPF pages (home, settings) |
+| `Services/` | Hotkeys, cursor, tray, GitHub updates, settings |
+| `Native/` | Win32 P/Invoke |
+| `Resources/` | `Lang.en.xaml` / `Lang.fr.xaml` string dictionaries |
+| `CursorCage.iss` | Inno Setup script |
+| `scripts/Build-Installer.ps1` | Publish + build the installer |
 
-## Stack technique
+## Tech stack
 
-- **Langage :** C#  
-- **UI :** WPF (+ WinForms pour `NotifyIcon` dans la barre des tâches)  
-- **Cible :** `net10.0-windows`
+- **Language:** C#
+- **UI:** WPF (+ WinForms for the notification-area `NotifyIcon`)
+- **Target:** `net10.0-windows`
 
 ---
 
 <div align="center">
 
-Construit avec **C#** et **WPF**
+Built with **C#** and **WPF**
 
 </div>

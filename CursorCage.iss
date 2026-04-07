@@ -15,7 +15,7 @@
 ; =============================================================================
 
 #define MyAppName "CursorCage"
-#define MyAppVersion "0.1.0"
+#define MyAppVersion "1.0.0"
 #define MyAppPublisher "erwang64"
 #define MyAppExeName "CursorCage.exe"
 #define MyAppURL "https://github.com/erwang64/CursorCage"

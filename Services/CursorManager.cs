@@ -176,6 +176,9 @@ public sealed class CursorManager
 
     private void ClipLoop(CancellationToken ct)
     {
+        Win32.POINT? lastPos = null;
+        var unchangedSamples = 0;
+
         while (!ct.IsCancellationRequested)
         {
             try
@@ -199,6 +202,24 @@ public sealed class CursorManager
 
                 var clip = ToClipRect(f);
                 Win32.ClipCursorRect(ref clip);
+
+                // Failsafe: certains jeux peuvent laisser le curseur "figé" après un changement d'état (ex. ESC/menu).
+                // Si la position ne bouge pas du tout trop longtemps, on réinitialise ClipCursor sans forcer SetCursorPos.
+                if (Win32.GetCursorPos(out var pos))
+                {
+                    if (lastPos is { } lp && lp.X == pos.X && lp.Y == pos.Y)
+                        unchangedSamples++;
+                    else
+                        unchangedSamples = 0;
+
+                    lastPos = pos;
+                    if (unchangedSamples >= 450) // ~0.45s à 1ms
+                    {
+                        Win32.ClipCursorRelease(0);
+                        Win32.ClipCursorRect(ref clip);
+                        unchangedSamples = 0;
+                    }
+                }
             }
             catch
             {
